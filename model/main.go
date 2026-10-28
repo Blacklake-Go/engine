@@ -369,6 +369,7 @@ func migrateDB() error {
 		&SubscriptionPreConsumeRecord{},
 		&CustomOAuthProvider{},
 		&UserOAuthBinding{},
+		&OAuthChannelConfig{},
 		&PerfMetric{},
 		&SystemInstance{},
 		&SystemTask{},
@@ -388,6 +389,9 @@ func migrateDB() error {
 	}
 	if err := InitializeExternalIdentityClaims(); err != nil {
 		return err
+	}
+	if err := InitOAuthChannelConfigs(DB); err != nil {
+		common.SysError(common.LogText("failed to initialize oauth channel configs: %s", err.Error()))
 	}
 	if common.UsingMainDatabase(common.DatabaseTypeSQLite) {
 		if err := ensureSubscriptionPlanTableSQLite(); err != nil {

@@ -243,6 +243,15 @@ func SetApiRouter(router *gin.Engine) {
 			customOAuthRoute.PUT("/:id", controller.UpdateCustomOAuthProvider)
 			customOAuthRoute.DELETE("/:id", controller.DeleteCustomOAuthProvider)
 		}
+
+		// OAuth Channels & Connectivity Management (admin/root)
+		oauthChannelsRoute := apiRouter.Group("/oauth-channels")
+		oauthChannelsRoute.Use(middleware.RootAuth())
+		{
+			oauthChannelsRoute.GET("/", controller.GetOAuthChannels)
+			oauthChannelsRoute.PUT("/:id", controller.UpdateOAuthChannel)
+			oauthChannelsRoute.POST("/:id/probe", controller.ProbeOAuthChannel)
+		}
 		performanceRoute := apiRouter.Group("/performance")
 		performanceRoute.Use(middleware.RootAuth())
 		{

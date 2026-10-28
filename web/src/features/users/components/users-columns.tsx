@@ -43,6 +43,13 @@ import {
   isUserDeleted,
 } from '../constants'
 import type { User } from '../types'
+import {
+  IconGithub,
+  IconGoogle,
+  IconLinuxDo,
+  IconTelegram,
+  IconWeChat,
+} from '@/assets/brand-icons'
 import { DataTableRowActions } from './data-table-row-actions'
 import { UserQuotaCell } from './user-quota-cell'
 
@@ -139,6 +146,76 @@ export function useUsersColumns(): ColumnDef<User>[] {
         enableHiding: false,
         size: 220,
         meta: { mobileTitle: true },
+      },
+      {
+        id: 'oauth_bindings',
+        header: t('OAuth Bindings'),
+        cell: ({ row }) => {
+          const user = row.original
+          const bindings = [
+            user.google_id && {
+              key: 'google',
+              name: 'Google',
+              icon: <IconGoogle className='h-3.5 w-3.5' />,
+              value: user.google_id,
+            },
+            user.github_id && {
+              key: 'github',
+              name: 'GitHub',
+              icon: <IconGithub className='h-3.5 w-3.5' />,
+              value: user.github_id,
+            },
+            user.wechat_id && {
+              key: 'wechat',
+              name: 'WeChat',
+              icon: <IconWeChat className='h-3.5 w-3.5 text-emerald-500' />,
+              value: user.wechat_id,
+            },
+            user.telegram_id && {
+              key: 'telegram',
+              name: 'Telegram',
+              icon: <IconTelegram className='h-3.5 w-3.5 text-sky-500' />,
+              value: user.telegram_id,
+            },
+            user.linux_do_id && {
+              key: 'linuxdo',
+              name: 'LINUX DO',
+              icon: <IconLinuxDo className='h-3.5 w-3.5 text-amber-500' />,
+              value: user.linux_do_id,
+            },
+          ].filter(Boolean) as {
+            key: string
+            name: string
+            icon: React.ReactNode
+            value: string
+          }
+
+          if (bindings.length === 0) {
+            return <span className='text-muted-foreground/40 text-xs'>-</span>
+          }
+
+          return (
+            <div className='flex items-center gap-1.5'>
+              {bindings.map((b) => (
+                <Tooltip key={b.key}>
+                  <TooltipTrigger
+                    render={
+                      <div className='bg-muted/60 border-border/60 hover:bg-muted flex h-6 w-6 items-center justify-center rounded-md border p-1 transition-colors' />
+                    }
+                  >
+                    {b.icon}
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className='text-xs'>
+                      {b.name}: {b.value}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </div>
+          )
+        },
+        size: 130,
       },
       {
         accessorKey: 'status',

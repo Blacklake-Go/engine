@@ -19,6 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import type { SystemStatus, OAuthProvider } from '../types'
 
 export {
+  buildGoogleOAuthUrl,
   buildGitHubOAuthUrl,
   buildDiscordOAuthUrl,
   buildOIDCOAuthUrl,

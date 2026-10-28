@@ -480,6 +480,29 @@ func findOrCreateOAuthUser(c *gin.Context, provider oauth.Provider, oauthUser *o
 		return nil, nil, &OAuthRegistrationDisabledError{}
 	}
 
+	// Try to resolve verified email from provider if missing
+	if oauthUser.Email == "" {
+		if emailProvider, ok := provider.(oauth.VerifiedEmailProvider); ok && token != nil {
+			emails, err := emailProvider.GetVerifiedEmails(c.Request.Context(), token)
+			if err == nil && len(emails) > 0 {
+				oauthUser.Email = emails[0]
+			}
+		}
+	}
+
+	// If verified email matches an existing account, automatically bind and sign in
+	if oauthUser.Email != "" {
+		normalizedEmail := model.NormalizeEmail(oauthUser.Email)
+		if existingUser, err := model.GetUniqueUserByEmail(normalizedEmail); err == nil && existingUser != nil && existingUser.Id > 0 {
+			col := provider.ProviderUserIDColumn()
+			if col != "" {
+				_ = model.UpdateUserBindColumn(existingUser.Id, col, oauthUser.ProviderUserID)
+				_ = provider.FillUserByProviderID(existingUser, oauthUser.ProviderUserID)
+				return existingUser, nil, nil
+			}
+		}
+	}
+
 	// Set up new user
 	user.Username = provider.GetProviderPrefix() + strconv.Itoa(model.GetMaxUserId()+1)
 
