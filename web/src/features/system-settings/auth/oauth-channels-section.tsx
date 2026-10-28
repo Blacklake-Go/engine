@@ -273,10 +273,10 @@ export function OAuthChannelsSection() {
                 </h4>
                 <p className='text-muted-foreground text-xs'>
                   {channel.id === 'google'
-                    ? 'Google Identity / OIDC'
+                    ? t('Google Identity / OIDC')
                     : channel.id === 'github'
-                      ? 'GitHub Apps / OAuth 2.0'
-                      : 'OAuth 2.0 Standard'}
+                      ? t('GitHub Apps / OAuth 2.0')
+                      : t('OAuth 2.0 Standard')}
                 </p>
               </div>
             </div>
@@ -327,7 +327,7 @@ export function OAuthChannelsSection() {
               </span>
               <span className='text-muted-foreground font-medium'>
                 {channel.probe_status === 'ready'
-                  ? 'TLS 1.3 Active'
+                  ? t('TLS 1.3 Active')
                   : t('Awaiting probe')}
               </span>
             </div>
