@@ -20,7 +20,6 @@ import { Link } from '@tanstack/react-router'
 import { Fragment, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useStatus } from '@/hooks/use-status'
 import { useSystemConfig } from '@/hooks/use-system-config'
 import { cn } from '@/lib/utils'
 
@@ -81,25 +80,18 @@ function FooterLinkItem(props: { link: FooterLink }) {
 // fragmented siblings so the parent flex container's gap controls spacing.
 function LegalLinks(props: { leadingSeparator?: boolean }) {
   const { t } = useTranslation()
-  const { status } = useStatus()
-  const items: { key: string; label: string; href: string }[] = []
-  if (status?.user_agreement_enabled) {
-    items.push({
+  const items: { key: string; label: string; href: string }[] = [
+    {
       key: 'user-agreement',
       label: t('User Agreement'),
-      href: '/user-agreement',
-    })
-  }
-  if (status?.privacy_policy_enabled) {
-    items.push({
+      href: '/terms',
+    },
+    {
       key: 'privacy-policy',
       label: t('Privacy Policy'),
-      href: '/privacy-policy',
-    })
-  }
-  if (items.length === 0) {
-    return null
-  }
+      href: '/privacy',
+    },
+  ]
   return (
     <>
       {items.map((item, index) => (
@@ -238,6 +230,15 @@ export function Footer(props: FooterProps) {
             />
             <div className='border-border/60 text-muted-foreground/45 flex w-full flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t pt-4 text-xs sm:w-auto sm:justify-end sm:border-t-0 sm:border-l sm:pt-0 sm:pl-5'>
               <LegalLinks />
+              <span aria-hidden='true' className='text-muted-foreground/30'>
+                ·
+              </span>
+              <a
+                href='mailto:ourslake@gmail.com'
+                className='hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200'
+              >
+                ourslake@gmail.com
+              </a>
               <ProjectAttribution currentYear={currentYear} inline />
             </div>
           </div>
@@ -293,12 +294,24 @@ export function Footer(props: FooterProps) {
         {/* Copyright + optional legal links inline on the left, project
             attribution on the right; wraps on narrow screens. */}
         <div className='border-border/30 mt-12 flex flex-col items-center justify-between gap-x-3 gap-y-2 border-t pt-6 sm:flex-row'>
-          <div className='text-muted-foreground/40 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs sm:justify-start'>
+          <div className='text-muted-foreground/60 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-xs sm:justify-start'>
             <span>
               &copy; {currentYear} {displayName}.{' '}
               {props.copyright ?? t('footer.defaultCopyright')}
             </span>
             <LegalLinks leadingSeparator />
+            <span aria-hidden='true' className='text-muted-foreground/30'>
+              ·
+            </span>
+            <span>
+              {t('footer.columns.about.links.contact')}:{' '}
+              <a
+                href='mailto:ourslake@gmail.com'
+                className='hover:text-foreground underline-offset-4 hover:underline transition-colors duration-200'
+              >
+                ourslake@gmail.com
+              </a>
+            </span>
           </div>
           <ProjectAttribution currentYear={currentYear} />
         </div>
